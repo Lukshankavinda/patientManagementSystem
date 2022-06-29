@@ -1,4 +1,4 @@
-import { DoctorCreateRequestDto } from '../Dto/doctor.Dto';
+import { DoctorCreateRequestDto, DoctorGetRequestDto } from '../Dto/doctor.Dto';
 import doctorModels from '../Models/doctorModels';
 import doctorInterface from '../Interfaces/doctorInterface';
 export class DoctorRepository {
@@ -6,6 +6,10 @@ export class DoctorRepository {
 
     async CreateDoctor(doctorData: DoctorCreateRequestDto) {
         return this.db.create(doctorData);
+    }
+
+    async GetDoctor(doctorNametData: DoctorGetRequestDto) {
+        return await this.db.find({ email: doctorNametData.email })
     }
 
 }

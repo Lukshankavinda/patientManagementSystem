@@ -1,7 +1,7 @@
 import React, { useState ,useEffect} from 'react';
 import axios from 'axios';
 import Form from 'react-bootstrap/Form';
-import { Button,  Row, Col } from 'react-bootstrap';
+import { Button,  Row, Col, Badge } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate ,Link,useLocation} from 'react-router-dom';
 import NavigationBar2 from './doctorNavbar2'
@@ -10,10 +10,10 @@ import { BiSearchAlt2 } from "react-icons/bi";
 function PatientDetailsResult() {
     const [phone_no, setPN] = useState('');
     const [complaint, setComplaint] = useState('');
-    const [illness, setIllness] = useState('');
+    const [illness, setIllness] = useState([]);
     const [blood_pressure, setBloodPressure] = useState('');
     const [weight, setWeight] = useState('');
-    const [treatment, setTreatment] = useState('');
+    const [treatment, setTreatment] = useState([]);
     const [pulse, setPulse] = useState('');
     const [search,setSearch] =useState('');
     const [posts, setPosts] = useState([]);
@@ -22,6 +22,8 @@ function PatientDetailsResult() {
     const [requestError, setRequestError] = useState();
     const navigater = useNavigate();
     const location = useLocation();
+    const [selectillness, setIll] = useState();
+    const [selecttretment, setTreat] = useState();
 
     const userToken = localStorage.getItem('userJWT');
     console.log('userToken', userToken);
@@ -84,6 +86,17 @@ function PatientDetailsResult() {
             setError("something is wrong");
         })
     }
+
+    const addIllness = (illl) => {
+        setIllness((illness) => [...illness, illl]);
+        console.log(illness);
+    };
+    
+    const addTreatment = (treat) => {
+        setTreatment((treatment) => [...treatment, treat]);
+        console.log(treatment);
+    };
+
     return (
         <div>
             <NavigationBar2  phone_no= {phone_no}/><br />
@@ -201,13 +214,37 @@ function PatientDetailsResult() {
                                         <Row >
                                             <Col >  
                                                 <Form.Group className="mb-3" controlId="formBasicPhoneNo">
-                                                    <Form.Control type="textarea" placeholder="Illness" value={illness} onChange={(e) => setIllness(e.target.value)} />
+                                                    <Form.Label ><b >Illness</b></Form.Label><br></br>
+                                                        <select
+                                                            value={selectillness}
+                                                            onChange={(e) => addIllness(e.target.value)}>
+                                                                <option>Fever</option>
+                                                                <option>Shorteness of breath</option>
+                                                                <option>weekness of fatigue</option>
+                                                        </select>
                                                 </Form.Group>
+                                                {illness.map((element, index) => (
+                                                    <Badge mb="3" className="mt-3 mx-1" pill bg="primary" key={index}>
+                                                        {element}
+                                                    </Badge>
+                                                ))}
                                             </Col><Col></Col>
                                             <Col >
                                                 <Form.Group className="mb-" controlId="formBasicPhoneNo">
-                                                    <Form.Control type="textarea" placeholder="Treatment" value={treatment} onChange={(e) => setTreatment(e.target.value)} />
+                                                    <Form.Label><b>Treatment</b></Form.Label><br></br>
+                                                    <select
+                                                        value={selecttretment}
+                                                        onChange={(e) => addTreatment(e.target.value)}>
+                                                            <option>Electrofiagram</option>
+                                                            <option>Holter monitering</option>
+                                                            <option>Ecocardiogram</option>
+                                                    </select>
                                                 </Form.Group>
+                                                {treatment.map((element, index) => (
+                                                    <Badge mb="3" className="mt-3 mx-1" pill bg="info" key={index}>
+                                                        {element}
+                                                    </Badge>
+                                                ))}
                                             </Col><Col></Col>
                                         </Row>
                                     </Row>

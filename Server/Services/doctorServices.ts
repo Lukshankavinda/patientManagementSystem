@@ -1,4 +1,4 @@
-import { DoctorCreateRequestDto } from '../Dto/doctor.Dto'
+import { DoctorCreateRequestDto, DoctorGetRequestDto } from '../Dto/doctor.Dto'
 import { DoctorRepository } from '../Repositories/doctorRepositories'
 
 export default class DoctorServices{
@@ -9,5 +9,11 @@ export default class DoctorServices{
         const doctor = await this.doctorRepo.CreateDoctor(doctorData);
 
         return DoctorCreateRequestDto.from(doctor);
+    }
+
+    async GetDoctor(doctorNametData: DoctorGetRequestDto) {
+        const doctor = await this.doctorRepo.GetDoctor(doctorNametData);
+
+        return doctor;
     }
 }

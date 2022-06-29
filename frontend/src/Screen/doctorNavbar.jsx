@@ -2,12 +2,15 @@ import React, { useEffect, useState } from 'react';
 import Navbar from 'react-bootstrap/Navbar';
 import { Container, Nav } from 'react-bootstrap';
 import { Link ,NavLink } from 'react-router-dom';
-import { BsPersonCircle, BsHourglassSplit, BsPeople } from 'react-icons/bs';
+import { BsPersonCircle, BsHourglassSplit, BsPeople, BsClockHistory} from 'react-icons/bs';
 import axios from 'axios';
 
 
 function DoctorNavbar() {
     const userToken = localStorage.getItem('userJWT');
+
+    const [posts, setposts] = useState([]);
+    const [requestError, setRequestError] = useState();
 
     axios.interceptors.request.use(
         (config) => {
@@ -20,9 +23,23 @@ function DoctorNavbar() {
         }
     );
 
+    useEffect(() => {
+        axios.get('http://localhost:5000/getName', {})
+        .then((res) => {
+            console.log(res);
+            setposts(res.data.doctorName);
+            console.log(res.data.doctorName);
+        })
+        .catch((err) => {
+            console.log(err);
+            setRequestError(err);
+        });
+    },[]);
+
+
     const logout = async () => {
         try {
-            localStorage.removeItem('ujsonwebtoken');
+            localStorage.removeItem('userJWT');
         } catch (error) {
             console.log(error);
         }
@@ -44,20 +61,22 @@ function DoctorNavbar() {
                     <Navbar.Collapse>
                         <Nav>&nbsp;&nbsp;
                             <NavLink style={NavLinkStyles} to="/detaills">
-                                <BsPeople /><br/> Patient 
+                                <BsPeople/><br/> Patient 
                             </NavLink> &nbsp;&nbsp;
                             <NavLink style={NavLinkStyles} to="/historyR">
-                                <BsHourglassSplit /><br/> History
+                                <BsClockHistory/><br/> History
                             </NavLink>
                         </Nav>
                     </Navbar.Collapse>
                     <Navbar.Collapse className="justify-content-end">
                         <Nav>
-                            <Link className="btn btn-outline-secondary rounded " 
-                                  to="/" 
-                                  style={{ marginTop: '30px' }} onClick={() => logout()}>
-                                <BsPersonCircle />
-                            </Link><br />
+                            <Link 
+                                className="btn btn-outline-secondary rounded-pill " 
+                                to="/"
+                                style={{ marginTop: '5px' }} 
+                                onClick={() => logout()}>    
+                                    {posts.map(post=>post.name)} <BsPersonCircle/>
+                            </Link>&nbsp;&nbsp;
                         </Nav>
                     </Navbar.Collapse>
                 </Container>

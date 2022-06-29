@@ -15,3 +15,14 @@ export class DoctorCreateRequestDto {
         return doctors.map((doctor) => DoctorCreateRequestDto.from(doctor));
     }
 }
+
+export class DoctorGetRequestDto {
+    constructor(
+        public readonly email: string | undefined,
+    ) {}
+    static from(body: Partial<DoctorCreateRequestDto>): DoctorCreateRequestDto {
+        return new DoctorCreateRequestDto(body.email, body.name, body.phone_no, body.password);
+    }
+
+
+}

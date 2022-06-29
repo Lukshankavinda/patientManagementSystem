@@ -1,6 +1,6 @@
 import {Request, Response, NextFunction} from "express";
 import DoctorServices from '../Services/doctorServices';
-import { DoctorCreateRequestDto } from '../Dto/doctor.Dto'
+import { DoctorCreateRequestDto, DoctorGetRequestDto } from '../Dto/doctor.Dto'
 import { DoctorRepository } from '../Repositories/doctorRepositories';
 import doctorModels from "../Models/doctorModels";
 
@@ -96,7 +96,7 @@ exports.login = async (req: Request, res: Response, next: NextFunction) => {
                               email: email
                           },
                           'SECRET',
-                          { expiresIn: '1h' }
+                          { expiresIn: '5h' }
                       );
                   };
                     return res.status(200).json({
@@ -112,7 +112,12 @@ exports.login = async (req: Request, res: Response, next: NextFunction) => {
 exports.getName = async (req: Request, res: Response, next: NextFunction) =>{
 
     let tName = res.locals.jwt.email
+
+    let doctorGetRequestDto: DoctorGetRequestDto = new DoctorGetRequestDto(tName);
+
+    const doctorName = await doctorService.GetDoctor(doctorGetRequestDto);
+
     return res.status(200).json({
-        name:tName
+        doctorName
     });
 }

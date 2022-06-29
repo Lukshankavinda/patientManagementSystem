@@ -2,14 +2,15 @@ import React, { useEffect, useState } from 'react';
 import Navbar from 'react-bootstrap/Navbar';
 import { Container, Nav } from 'react-bootstrap';
 import { Link ,NavLink } from 'react-router-dom';
-import { MdNotifications } from 'react-icons/md';
-import { BsPersonCircle, BsHourglassSplit, BsFillCalendar3Fill, BsPeople } from 'react-icons/bs';
+import { BsPersonCircle, BsHourglassSplit, BsPeople, BsClockHistory } from 'react-icons/bs';
 import axios from 'axios';
-import PatientDetails from './pationDetailsScreen';
 
 function NavigationBar2() {
     
     const userToken = localStorage.getItem('userJWT');
+
+    const [posts, setposts] = useState([]);
+    const [requestError, setRequestError] = useState();
 
     axios.interceptors.request.use(
         (config) => {
@@ -22,21 +23,37 @@ function NavigationBar2() {
         }
     );
 
+    useEffect(() => {
+        axios.get('http://localhost:5000/getName', {})
+        .then((res) => {
+            console.log(res);
+            setposts(res.data.doctorName);
+            console.log(res.data.doctorName);
+        })
+        .catch((err) => {
+            console.log(err);
+            setRequestError(err);
+        });
+    },[]);
+
+
     const logout = async () => {
         try {
-            localStorage.removeItem('ujsonwebtoken');
+            localStorage.removeItem('userJWT');
         } catch (error) {
             console.log(error);
         }
     };
-const NavLinkStyles = ({isActive}) => {
-    return{
-        fontWeight: isActive? 'bold' : 'normal' ,
-        textDecoration: isActive? 'none' : 'undrline',
-        color: isActive ? '#fff' : '#545e6f',
-        background: isActive ? '#7600dc' : '#f0f0f0',
+    
+    const NavLinkStyles = ({isActive}) => {
+        return{
+            fontWeight: isActive? 'bold' : 'normal' ,
+            textDecoration: isActive? 'none' : 'undrline',
+            color: isActive ? '#fff' : '#545e6f',
+            background: isActive ? '#7600dc' : '#f0f0f0',
+        }
     }
-}
+
     return (
         <div>
             <Navbar collapseOnSelect expand="lg" bg="light">
@@ -50,16 +67,19 @@ const NavLinkStyles = ({isActive}) => {
                             &nbsp;&nbsp;
                             <NavLink style={NavLinkStyles} to="/historyR">
                                 
-                                <BsHourglassSplit /><br/> History
+                                <BsClockHistory/><br/> History
                             </NavLink>
                         </Nav>
                     </Navbar.Collapse>
                     <Navbar.Collapse className="justify-content-end">
                         <Nav>
-                            <Link className="btn btn-outline-secondary rounded " to="/" style={{ marginTop: '30px' }} onClick={() => logout()}>
-                                <BsPersonCircle />
-                            </Link>
-                            <br />
+                            <Link 
+                                className="btn btn-outline-secondary rounded-pill " 
+                                to="/"
+                                style={{ marginTop: '30px' }} 
+                                onClick={() => logout()}>    
+                                    {posts.map(post=>post.name)} <BsPersonCircle/>
+                            </Link>&nbsp;&nbsp;
                         </Nav>
                     </Navbar.Collapse>
                 </Container>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import Form from 'react-bootstrap/Form';
-import { Button, Row, Col} from 'react-bootstrap';
+import { Button, Row, Col, Badge} from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate ,Link} from 'react-router-dom';
 import { BiSearchAlt2 } from "react-icons/bi";
@@ -15,15 +15,17 @@ export default function PationDetailsScreen() {
   const [gender, setGender] = useState('');
   const [dob, setDOB] = useState('');
   const [complaint, setComplaint] = useState('');
-  const [illness, setIllness] = useState('');
+  const [illness, setIllness] = useState([]);
   const [blood_pressure, setBloodPressure] = useState('');
   const [weight, setWeight] = useState('');
-  const [treatment, setTreatment] = useState('');
+  const [treatment, setTreatment] = useState([]);
   const [pulse, setPulse] = useState('');
   const [search,setSearch] =useState('');
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigater = useNavigate();
+  const [selectillness, setIll] = useState();
+  const [selecttretment, setTreat] = useState();
 
   const userToken = localStorage.getItem('userJWT');
 
@@ -86,6 +88,15 @@ export default function PationDetailsScreen() {
       })
   }
 
+  const addIllness = (illl) => {
+    setIllness((illness) => [...illness, illl]);
+    console.log(illness);
+  };
+
+  const addTreatment = (treat) => {
+    setTreatment((treatment) => [...treatment, treat]);
+    console.log(treatment);
+  };
 
   return (
     <div>
@@ -241,21 +252,37 @@ export default function PationDetailsScreen() {
               <Row >
                 <Col >
                   <Form.Group className="mb-3" controlId="formBasicPhoneNo">
-                    <Form.Control 
-                        type="textarea" 
-                        placeholder="Illness" 
-                        value={illness} 
-                        onChange={(e) => setIllness(e.target.value)} />
+                    <Form.Label ><b >Illness</b></Form.Label><br></br>
+                      <select
+                          value={selectillness}
+                          onChange={(e) => addIllness(e.target.value)}>
+                              <option>Fever</option>
+                              <option>Shorteness of breath</option>
+                              <option>weekness of fatigue</option>
+                      </select>
                   </Form.Group>
+                  {illness.map((element, index) => (
+                    <Badge mb="3" className="mt-3 mx-1" pill bg="primary" key={index}>
+                        {element}
+                    </Badge>
+                  ))}
                 </Col><Col></Col>
                 <Col >
                   <Form.Group className="mb-" controlId="formBasicPhoneNo">
-                    <Form.Control 
-                        type="textarea" 
-                        placeholder="Treatment" 
-                        value={treatment} 
-                        onChange={(e) => setTreatment(e.target.value)} />
+                    <Form.Label><b>Treatment</b></Form.Label><br></br>
+                      <select
+                          value={selecttretment}
+                          onChange={(e) => addTreatment(e.target.value)}>
+                              <option>Electrofiagram</option>
+                              <option>Holter monitering</option>
+                              <option>Ecocardiogram</option>
+                      </select>
                   </Form.Group>
+                  {treatment.map((element, index) => (
+                    <Badge mb="3" className="mt-3 mx-1" pill bg="info" key={index}>
+                        {element}
+                    </Badge>
+                  ))}
                 </Col><Col></Col>
               </Row>
             </Row>
